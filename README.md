@@ -11,7 +11,7 @@ Piping is useful when composing many small pure functions together, one problem 
 const myNumber = Math.round(Math.sqrt(Math.PI));
 ```
 
-Unix has long provided a piping mechanism to achieve that, for example: `ps aux | grep node` and the newer Elixir programming language provides the `|>` pipe right operator which is very readable.
+Unix has long provided a piping mechanism to achieve that, for example: `ps aux | grep node` as well as F# and the Elixir programming language, both provide the `|>` pipe greater-than operator which is very readable.
 
 ## Syntax
 
@@ -30,8 +30,9 @@ function logger (callback) {
   return function (value) {
     callback(value);
     return value;
-  }
+  };
 }
+
 Math.PI
   |> logger(console.log);
   |> Math.sqrt
@@ -40,11 +41,31 @@ Math.PI
   |> logger(console.log);
 ```
 
-While a slightly contrived example as we certainly wouldn't write code that looks like `logger(Math.round(logger(Math.sqrt(logger(Math.PI)))));` to our data processing and instead assign to variables at each stage of execution we are able to keep the code slightly cleaner and use less assignment operators.
+While a slightly contrived example as we certainly wouldn't write code that looks like:
+
+```javascript
+logger(Math.round(logger(Math.sqrt(logger(Math.PI)))));
+```
+
+We would instead assign to variables at each stage of execution:
+
+```javascript
+const PI = Math.PI;
+logger(PI);
+
+const squaredPI = Math.sqrt(PI);
+logger(squaredPI);
+
+const roundedSquaredPI = Math.round(squaredPI);
+logger(roundedSquaredPI);
+```
+
+However with this clarity we have unfortunately had to create additional constants within this lexical block, whereas simple value passing between pure functions provides a very clean and readable approach and allows easier updates in the future if we wanted to add additional processing within the chain.
 
 ### Notes
-* A single `|` operator would be harder to implement given we already have the `||` double pipe operator in JavaScript, parsers would need to look forward to see if the next operator is not a second `|` pipe. The `|>` pipe greater-than operator would be new to JavaScript as has already been adopted by at least 1 language.   
+* A single `|` operator would be harder to implement given we already have the `||` double pipe operator in JavaScript, parsers would need to look forward to see if the next operator is not a second `|` pipe operator which makes a better case for the `|>` pipe greater-than operator. It would be new to JavaScript, though has already been adopted by at least 1 other language.   
 
 ## External References
+* [F# pipe operator](https://docs.microsoft.com/en-gb/dotnet/fsharp/language-reference/functions/index#function-composition-and-pipelining)
 * [Elixir pipe operator](https://elixir-lang.org/getting-started/enumerables-and-streams.html#the-pipe-operator)
 * [Unix pipeline](https://en.wikipedia.org/wiki/Pipeline_(Unix))
